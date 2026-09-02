@@ -30,7 +30,9 @@ export function useSeo({ title, description, path, type = "website", jsonLd }: S
     setMeta("property", "og:description", description);
     setMeta("property", "og:url", url);
     setMeta("property", "og:type", type);
+    setMeta("property", "og:image", SITE + "/og.png");
     setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:image", SITE + "/og.png");
 
     const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {

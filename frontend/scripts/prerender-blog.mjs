@@ -79,7 +79,9 @@ function loadPosts() {
 
 const template = readFileSync(join(root, "dist", "index.html"), "utf8");
 
-function headTags({ title, description, url, jsonLd }) {
+const OG_IMAGE = `${SITE}/og.png`;
+
+function headTags({ title, description, url, jsonLd, type = "article" }) {
   return `
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
@@ -87,14 +89,20 @@ function headTags({ title, description, url, jsonLd }) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${url}">
-<meta property="og:type" content="article">
+<meta property="og:type" content="${type}">
+<meta property="og:site_name" content="Chain-Code">
+<meta property="og:image" content="${OG_IMAGE}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Chain-Code — write it once, own it forever">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${OG_IMAGE}">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`;
 }
 
-function shell(templateHtml, { title, description, url, jsonLd, bodyHtml }) {
+function shell(templateHtml, { title, description, url, jsonLd, bodyHtml, type }) {
   return templateHtml
-    .replace("<title>", `${headTags({ title, description, url, jsonLd })}<title data-prerendered="replace">`)
+    .replace("<title>", `${headTags({ title, description, url, jsonLd, type })}<title data-prerendered="replace">`)
     // strip the placeholder title tag we just displaced
     .replace(/<title data-prerendered="replace">[^<]*<\/title>/, "")
     .replace('<div id="root"></div>', `<div id="root">${bodyHtml}</div>`);
@@ -121,6 +129,7 @@ writeFileSync(join(root, "dist", "index.html"),
     description:
       "Solve coding challenges in a sandboxed judge, pass an originality check, and mint your accepted solution as an on-chain NFT certificate tied to your wallet.",
     url: SITE + "/",
+    type: "website",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "WebSite",
@@ -140,6 +149,7 @@ writeFileSync(join(root, "dist", "blog", "index.html"),
     title: "Chain-Code blog: code challenges, NFTs, and sandboxes",
     description: "Writing from the Chain-Code workshop: code ownership certificates, sandboxed execution, judge engines, and building for on-chain developers.",
     url: `${SITE}/blog`,
+    type: "website",
     jsonLd: { "@context": "https://schema.org", "@type": "Blog", name: "Chain-Code blog", url: `${SITE}/blog` },
     bodyHtml: `<h1>Writing from the Chain-Code workshop</h1>${listItems}`,
   }));
