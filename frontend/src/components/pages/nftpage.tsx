@@ -19,7 +19,15 @@ const NFTPage: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
 
   useEffect(() => {
     getNFTs()
-      .then((result) => setNfts(result))
+      .then((result) =>
+        // newest certificates first — users expect their latest solve on top
+        setNfts(
+          [...result].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+        )
+      )
       .catch((err) => {
         console.error("Error fetching NFTs:", err);
         setError("Couldn't load your certificates. Please try again.");

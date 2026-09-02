@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
 import Editor from "@monaco-editor/react";
 import { Check, Loader2, RotateCcw, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -38,13 +37,16 @@ interface ResultType {
 }
 
 export default function CodeEditor() {
-  const { code, setCode, selectedProblem, language } = useProblemContext();
+  const { code, setCode, selectedProblem, language, refreshSubmissions } = useProblemContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phase, setPhase] = useState<SubmitPhase | null>(null);
   const [result, setResult] = useState<ResultType | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [mintTakingLong, setMintTakingLong] = useState(false);
+  // mint success is celebrated with a real centered dialog, not a corner toast
+  // — it's the product's peak moment and deserves the screen's attention
+  const [mintedOpen, setMintedOpen] = useState(false);
   // pre-mint confirmation: mints are irreversible, so the destination wallet
   // must be confirmed by the user before the on-chain call is made
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -122,34 +124,8 @@ export default function CodeEditor() {
   }, [result?.error, result?.cancelled]);
   useEffect(() => {
     if (result?.submissionId) {
-      toast({
-        title: "Certificate minted",
-        description: `Your accepted solution for "${selectedProblem?.title}" is now sealed on-chain.`,
-        variant: "success",
-        action: (
-          <div className="flex flex-col gap-1.5">
-            <ToastAction
-              altText="View certificate"
-              onClick={() => navigate(`/nft/${result.submissionId}`)}
-            >
-              View certificate
-            </ToastAction>
-            {result.mintTxHash && (
-              <ToastAction
-                altText="View on Etherscan"
-                onClick={() =>
-                  window.open(
-                    `https://sepolia.etherscan.io/tx/${result.mintTxHash}`,
-                    "_blank"
-                  )
-                }
-              >
-                View on Etherscan
-              </ToastAction>
-            )}
-          </div>
-        ),
-      });
+      setMintedOpen(true);
+      refreshSubmissions();
     }
   }, [result?.submissionId]);
 
@@ -330,6 +306,81 @@ export default function CodeEditor() {
                 className="bg-gradient-to-b from-[#ecc76a] to-[#c89d4a] text-[#14102e] shadow-[0_8px_22px_-6px_rgba(200,157,74,0.55)] enabled:hover:-translate-y-px enabled:hover:shadow-[0_12px_28px_-6px_rgba(200,157,74,0.65)]"
               >
                 Confirm &amp; mint
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mintedOpen && result?.submissionId && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+          onKeyDown={(e) => e.key === "Escape" && setMintedOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mint-success-title"
+        >
+          <div className="relative w-full max-w-md rounded-xl border border-[#d4a017]/25 bg-[#1a1530] p-8 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.7)]">
+            <button
+              type="button"
+              onClick={() => setMintedOpen(false)}
+              aria-label="Close"
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md text-white/50 transition-colors duration-200 hover:bg-white/[0.06] hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#d4a017]/40 bg-[#d4a017]/10">
+              <Check className="h-6 w-6 text-[#e8c664]" />
+            </div>
+
+            <p className="mt-5 text-center f-mono text-[10px] uppercase tracking-[0.25em] text-[#e8c664]">
+              Sealed on-chain
+            </p>
+            <h3
+              id="mint-success-title"
+              className="mt-2 text-center f-display text-xl font-semibold tracking-tight text-[#f5f1e8]"
+            >
+              Certificate minted
+            </h3>
+            <p className="mt-3 text-center text-sm leading-relaxed text-white/60">
+              Your accepted solution for
+              "<span className="text-white/85">{selectedProblem?.title}</span>"
+              is now permanently sealed on Sepolia and attributed to your wallet.
+            </p>
+
+            {result.mintTxHash && (
+              <p className="mt-4 break-all rounded-md border border-white/[0.09] bg-black/25 px-3 py-2.5 f-mono text-[11px] text-white/55">
+                tx: {result.mintTxHash.slice(0, 22)}…{result.mintTxHash.slice(-8)}
+              </p>
+            )}
+
+            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:justify-end">
+              {result.mintTxHash && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    window.open(
+                      `https://sepolia.etherscan.io/tx/${result.mintTxHash}`,
+                      "_blank"
+                    )
+                  }
+                  className="border-white/[0.12] bg-transparent hover:bg-white/[0.06] hover:text-white"
+                >
+                  View on Etherscan
+                </Button>
+              )}
+              <Button
+                type="button"
+                autoFocus
+                onClick={() => {
+                  setMintedOpen(false);
+                  navigate(`/nft/${result.submissionId}`);
+                }}
+                className="bg-gradient-to-b from-[#ecc76a] to-[#c89d4a] text-[#14102e] shadow-[0_8px_22px_-6px_rgba(200,157,74,0.55)] enabled:hover:-translate-y-px enabled:hover:shadow-[0_12px_28px_-6px_rgba(200,157,74,0.65)]"
+              >
+                View certificate
               </Button>
             </div>
           </div>

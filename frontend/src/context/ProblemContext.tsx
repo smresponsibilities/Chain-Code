@@ -34,6 +34,8 @@ interface ProblemContextType {
   isLoading: boolean;
   isFetchingProblem: boolean;
   error: string | null;
+  submissionsVersion: number;
+  refreshSubmissions: () => void;
 }
 
 const ProblemContext = createContext<ProblemContextType | undefined>(undefined);
@@ -48,6 +50,10 @@ export const ProblemProvider: React.FC<{ children: ReactNode }> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFetchingProblem, setIsFetchingProblem] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  // bump after a submission mints so SubmissionsTab refetches without a page
+  // reload — only that component re-renders, not the whole route
+  const [submissionsVersion, setSubmissionsVersion] = useState(0);
+  const refreshSubmissions = () => setSubmissionsVersion((v) => v + 1);
 
   useEffect(() => {
     const fetchProblems = async () => {
@@ -94,6 +100,8 @@ export const ProblemProvider: React.FC<{ children: ReactNode }> = ({
         isLoading,
         isFetchingProblem,
         error,
+        submissionsVersion,
+        refreshSubmissions,
       }}
     >
       {children}
