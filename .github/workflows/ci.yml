@@ -18,7 +18,8 @@ jobs:
       - name: Install
         run: npm ci --prefix frontend
       - name: Type check
-        run: npx tsc --prefix frontend
+        working-directory: frontend
+        run: npx tsc --noEmit
       - name: SEO lint (content gates)
         run: npm run seo:check --prefix frontend
 
