@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 import { useAuthToken, setAuthToken } from "@/utils/auth";
@@ -16,7 +16,114 @@ const loggedInLinks = [
   { to: "/nft", label: "My NFTs" },
 ];
 
-const FEEDBACK_MAILTO = "mailto:shivammahajan.mail@gmail.com?subject=ChainCode%20Feedback";
+const FEEDBACK_EMAIL = "shivammahajan.mail@gmail.com";
+const FEEDBACK_SUBJECT = "ChainCode Feedback";
+const FEEDBACK_MAILTO = `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(FEEDBACK_SUBJECT)}`;
+// Gmail web compose: works in any browser, no OS mail handler needed. mailto:
+// silently does nothing on desktops without a registered client, which is why
+// this menu exists instead of a bare link.
+const FEEDBACK_GMAIL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+  FEEDBACK_EMAIL,
+)}&su=${encodeURIComponent(FEEDBACK_SUBJECT)}`;
+
+// `inline` renders the panel in flow instead of absolutely positioned: the
+// mobile nav is overflow-hidden for its height animation, which clips a popover.
+function FeedbackMenu({
+  className,
+  onNavigate,
+  inline = false,
+}: {
+  className: string;
+  onNavigate?: () => void;
+  inline?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!wrap.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(FEEDBACK_EMAIL);
+    } catch {
+      // clipboard blocked (permissions, insecure context) — the address is
+      // shown in the menu, so the user can still select it by hand
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  const item =
+    "block w-full px-3 py-2 text-left text-sm text-white/70 transition-colors duration-200 hover:bg-white/[0.06] hover:text-white";
+
+  return (
+    <div ref={wrap} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className={className}
+      >
+        Feedback
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className={`overflow-hidden rounded-lg border border-white/[0.1] bg-[#1b1638] ${
+            inline
+              ? "mb-1 w-full"
+              : "absolute right-0 z-50 mt-2 w-60 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.7)]"
+          }`}
+        >
+          <a
+            href={FEEDBACK_GMAIL}
+            target="_blank"
+            rel="noopener noreferrer"
+            role="menuitem"
+            className={item}
+            onClick={() => {
+              setOpen(false);
+              onNavigate?.();
+            }}
+          >
+            Compose in Gmail
+          </a>
+          <a
+            href={FEEDBACK_MAILTO}
+            role="menuitem"
+            className={item}
+            onClick={() => {
+              setOpen(false);
+              onNavigate?.();
+            }}
+          >
+            Open mail app
+          </a>
+          <button type="button" role="menuitem" onClick={copy} className={item}>
+            {copied ? "Address copied" : "Copy address"}
+          </button>
+          <p className="select-all border-t border-white/[0.08] px-3 py-2 text-xs text-white/40">
+            {FEEDBACK_EMAIL}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Header({ onLogout }: { onLogout?: () => void }) {
   const location = useLocation();
@@ -75,12 +182,7 @@ export default function Header({ onLogout }: { onLogout?: () => void }) {
                 {link.label}
               </Link>
             ))}
-            <a
-              href={FEEDBACK_MAILTO}
-              className="text-sm font-medium text-white/55 transition-colors duration-200 hover:text-[#d4a017]"
-            >
-              Feedback
-            </a>
+            <FeedbackMenu className="text-sm font-medium text-white/55 transition-colors duration-200 hover:text-[#d4a017]" />
           </nav>
         </div>
 
@@ -152,12 +254,11 @@ export default function Header({ onLogout }: { onLogout?: () => void }) {
                   {link.label}
                 </Link>
               ))}
-              <a
-                href={FEEDBACK_MAILTO}
-                className="py-3 text-sm font-medium text-white/65 transition-colors duration-200 hover:text-white"
-              >
-                Feedback
-              </a>
+              <FeedbackMenu
+                inline
+                className="w-full py-3 text-left text-sm font-medium text-white/65 transition-colors duration-200 hover:text-white"
+                onNavigate={() => setOpen(false)}
+              />
               {token ? (
                 <>
                   <button
