@@ -12,6 +12,7 @@
 - [Originality check source code: how copies get caught](https://chaincode-xi.vercel.app/blog/originality-check-source-code-plagiarism-detection): token-level and structural similarity signals, plus honest failure modes like independent convergence.
 - [Learn Solidity by building projects](https://chaincode-xi.vercel.app/blog/learn-solidity-by-building-projects): five-stage ladder from counter contract to self-audited on-chain certificate.
 - [Coding challenge platforms that reward you](https://chaincode-xi.vercel.app/blog/coding-challenge-platforms-reward-comparison): reputation vs money vs ownership reward models compared.
+- [Why Chain-Code shows every accepted submission](https://chaincode-xi.vercel.app/blog/public-submissions-why-we-show-everyones-code): the reasoning behind the public All Submissions tab — avoiding duplicate solves without weakening the originality gate.
 
 ## Product pages
 

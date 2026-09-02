@@ -19,12 +19,12 @@ export default function SubmissionsTab() {
   const [submissions, setSubmissions] = useState<Array<any>>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { selectedProblem } = useProblemContext();
+  const { selectedProblem, submissionsVersion } = useProblemContext();
   const { toast } = useToast();
 
   useEffect(() => {
     fetchRecentSubmissions();
-  }, [selectedProblem]);
+  }, [selectedProblem, submissionsVersion]);
 
   const fetchRecentSubmissions = async () => {
     if (!selectedProblem?._id) {
@@ -57,18 +57,12 @@ export default function SubmissionsTab() {
     }
   }, [error]);
 
-  if (loading) {
+  if (loading || !selectedProblem?._id) {
     return (
-      <div className="flex flex-1 items-center justify-center f-mono text-[11px] uppercase tracking-[0.2em] text-white/40">
-        Loading submissions…
-      </div>
-    );
-  }
-
-  if (!selectedProblem?._id) {
-    return (
-      <div className="flex flex-1 items-center justify-center py-16 f-mono text-[11px] uppercase tracking-[0.2em] text-white/40">
-        Loading problem…
+      <div className="flex flex-wrap justify-center gap-5 p-2 lg:justify-start">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-80 w-80 animate-pulse rounded-xl bg-white/[0.04]" />
+        ))}
       </div>
     );
   }
@@ -109,23 +103,12 @@ export default function SubmissionsTab() {
       <div className="flex flex-wrap justify-center gap-5 lg:justify-start">
         {visible.map((submission: any) => (
           <div key={submission._id} className="flex flex-col items-center gap-1.5">
-            {submission.code ? (
-              <AnimatedCard
-                title={selectedProblem?.title || "Untitled Problem"}
-                code={submission.code}
-                to={`/nft/${submission._id}`}
-                seed={submission._id}
-              />
-            ) : (
-              <div className="flex h-40 w-56 flex-col items-center justify-center gap-2 rounded-md border border-white/10 bg-white/[0.03] p-3 text-center">
-                <p className="f-mono text-[10px] uppercase tracking-[0.2em] text-[#d4a017]">
-                  Sealed submission
-                </p>
-                <p className="text-xs leading-snug" style={{ color: "rgba(245,241,232,0.45)" }}>
-                  Source stays private — only the owner and the originality judge can read it.
-                </p>
-              </div>
-            )}
+            <AnimatedCard
+              title={selectedProblem?.title || "Untitled Problem"}
+              code={submission.code}
+              to={`/nft/${submission._id}`}
+              seed={submission._id}
+            />
             <p className="f-mono text-[10px] uppercase tracking-[0.2em] text-white/40">
               {timeAgo(submission.createdAt)}
             </p>

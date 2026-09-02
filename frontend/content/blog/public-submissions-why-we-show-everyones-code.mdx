@@ -1,0 +1,38 @@
+---
+title: "Public code submissions: why we show everyone's code"
+description: Why Chain-Code's public code submissions tab shows every accepted solve's full source to any signed-in user, and how the originality check still holds.
+primaryKeyword: public code submissions
+secondaryKeywords: avoid duplicate solutions, learn from other solutions, coding platform transparency, all submissions tab
+date: 2026-08-26
+author: Chain-Code
+canonical: https://chaincode-xi.vercel.app/blog/public-submissions-why-we-show-everyones-code
+slug: public-submissions-why-we-show-everyones-code
+---
+
+# Public code submissions — why Chain-Code shows everyone's code
+
+Most coding platforms treat other people's solutions as private by default. Chain-Code doesn't: public code submissions are the default here. Open any problem's **All Submissions** tab and you see every accepted solve, full source code included, for anyone signed in — not just your own. That's a deliberate choice, and it's worth explaining why, especially next to how we [self-host the judge](/blog/judge0-vs-piston-self-hosted-coding-sandbox) that decides what counts as accepted in the first place.
+
+## The problem we were solving
+
+A judge that only shows you your own history has a blind spot: you can't tell if the approach you're about to submit already exists ten times over. You write your solution, submit, get accepted, and only later realize five other people solved it the exact same way an hour earlier. Nothing was learned, and nothing new was added — just another near-identical entry in the database.
+
+The fix isn't to block resubmission. It's to let people see what's already been tried before they write a line of code, the same way you'd skim existing answers on a forum before posting a duplicate question.
+
+## What changed: public code submissions, one tab
+
+The All Submissions tab now renders every accepted solve's code directly, right there in the grid of certificate cards — no click-through to a separate page, no re-fetching the same list one submission at a time. You land on the problem, open the tab once, and read through every approach that's been tried in that single view. That "read once, see everything" shape is the point: comparing five approaches shouldn't cost five page loads.
+
+The list also stays live. Mint a new certificate and the tab updates itself in place — no full page reload, just the one component refetching its own data, the same principle behind [minting a certificate](/blog/mint-code-as-nft-tutorial-beginners) actually feeling instant once it confirms: a piece of state changes, the component that depends on it re-renders, everything else on the page stays untouched.
+
+Access is still gated by login. You have to be a signed-in Chain-Code user to see the tab at all — this isn't a public, unauthenticated code dump, it's a shared view among people actually working the same problems.
+
+## Doesn't public code make copying easier?
+
+That's the obvious objection, and it deserves a straight answer: visibility and originality checking are two different layers, and we didn't remove the second one to add the first. Every submission still runs through the same originality judge at submit time, before anything mints. Reading someone else's accepted approach and then pasting it verbatim still gets caught there — the gate never depended on secrecy in the first place, it depends on comparing your code against what's already on record. Making that record visible to solvers doesn't weaken the check; it just means the thing solvers are being compared against is no longer a mystery to them.
+
+What visibility actually buys is honest reuse instead of accidental duplication: you can see that the two-pointer approach has already been submitted eight times and go try something else, or you can see a cleaner way to handle an edge case you were stuck on and understand it — as opposed to submitting a near-identical brute force nobody needed to see twice.
+
+## The trade we're making
+
+We're optimizing for a shared, legible record of how a problem has actually been solved over optimizing for each solver's code being a private surprise. On a platform where every accepted solve mints a permanent on-chain certificate anyway, the code was never going to disappear — it's attributed to a wallet, timestamped, and verifiable forever. Keeping it hidden from other solvers while it's already permanent on Sepolia was protecting against the wrong thing. Showing it is more useful to the person deciding what to build next.
