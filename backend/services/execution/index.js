@@ -167,7 +167,15 @@ export async function execute(code, languageId, testcases) {
 
   let rawResults;
   if (EXECUTION_PROVIDER === "selfhosted") {
-    rawResults = await executeSelfHosted(code, languageId, testcases);
+    try {
+      rawResults = await executeSelfHosted(code, languageId, testcases);
+    } catch (err) {
+      // self-hosted box down/unreachable — fall back to the RapidAPI free plan
+      // (50 req/day) if a key is configured, instead of failing the request.
+      if (!RAPIDAPI_KEY) throw err;
+      console.warn(`selfhosted judge0 failed (${err.message}), falling back to RapidAPI`);
+      rawResults = await executeRapidApi(code, languageId, testcases);
+    }
   } else {
     rawResults = await executeRapidApi(code, languageId, testcases);
   }

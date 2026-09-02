@@ -48,3 +48,7 @@ npm-debug.log*
 
 # Optional: Ignore git hooks (if you're using Husky, for example)
 .husky/
+
+# judge0 self-host secrets (copy from .example, never commit)
+/deploy/judge0/judge0.conf
+/deploy/judge0/db.env

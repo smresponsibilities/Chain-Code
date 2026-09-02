@@ -1,0 +1,30 @@
+# Judge0 server + workers config. Copy to judge0.conf on the VM and fill in
+# the blanks — never commit judge0.conf itself (gitignored).
+
+# --- Security: required since the box is reachable from the internet ---
+# backend/services/execution/index.js sends this exact header by default
+# (JUDGE0_AUTHN_HEADER=X-Auth-Token), so keep the name in sync if you change it.
+AUTHN_HEADER=X-Auth-Token
+AUTHN_TOKEN=change-me-to-a-long-random-string
+
+# --- Postgres (must match db.env) ---
+POSTGRES_HOST=db
+POSTGRES_DB=judge0
+POSTGRES_USER=judge0
+POSTGRES_PASSWORD=change-me
+
+# --- Redis ---
+REDIS_HOST=redis
+REDIS_PASSWORD=change-me-too
+
+# --- Execution limits (defaults; tune if 2 OCPU/12GB struggles under load) ---
+MAX_CPU_TIME_LIMIT=15
+MAX_CPU_EXTRA_TIME=5
+MAX_WALL_TIME_LIMIT=20
+MAX_MEMORY_LIMIT=256000
+MAX_PROCESSES_AND_OR_THREADS=60
+ENABLE_WAIT_RESULT=true
+
+# --- Misc ---
+JUDGE0_HOMEPAGE=
+JUDGE0_MAINTAINER_EMAIL=
