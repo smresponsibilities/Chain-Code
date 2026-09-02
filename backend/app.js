@@ -12,6 +12,7 @@ import submissionRoutes from "./routes/submission.js";
 import executeRoutes from "./routes/execute.js";
 import nftRoutes from "./routes/nft.js";
 import pollRoutes from "./routes/poll.js";
+import progressRoutes from "./routes/progress.js";
 import govRoutes from "./routes/gov.js";
 import voteRoutes from "./routes/vote.js";
 
@@ -50,6 +51,7 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/execute", executeRoutes);
 app.use("/api/nft", nftRoutes);
 app.use("/api/poll", pollRoutes);
+app.use("/api/progress", progressRoutes);
 app.use("/api/gov", govRoutes);
 app.use("/api/vote", voteRoutes);
 
