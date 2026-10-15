@@ -1,15 +1,18 @@
 # Chaincode — AI-Verified Web3 Proof-of-Skill Platform
 
+[![Live App](https://img.shields.io/badge/Live_App-Vercel-3b82f6?style=for-the-badge&logo=vercel&logoColor=white)](https://chain-code.vercel.app)
+[![Portfolio Architecture](https://img.shields.io/badge/Architecture-shivammahajan.com-ff5d01?style=for-the-badge)](https://shivammahajan.com/projects/)
 [![HackIndia](https://img.shields.io/badge/HackIndia-3rd%20Place%20Winner-ffd700?style=for-the-badge&logo=trophy)](https://shivammahajan.com/projects/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.20-363636?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
 [![Ethereum](https://img.shields.io/badge/Ethereum-ERC--721-3C3C3D?style=for-the-badge&logo=ethereum)](https://ethereum.org/)
 [![Google Gemini](https://img.shields.io/badge/Gemini_AI-Originality_Judge-4285F4?style=for-the-badge&logo=google)](https://deepmind.google/technologies/gemini/)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![React](https://img.shields.io/badge/Frontend-React%2018-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 
 A Web3 competitive coding platform that validates algorithmic uniqueness using Google Gemini AI and mints verified proof-of-completion NFT badges on-chain. Awarded **3rd Place out of 200+ competing engineering teams** at HackIndia Regionals.
 
-Live Project: [Chaincode on Shivam Mahajan Portfolio](https://shivammahajan.com/projects/)
+* **Live App:** **[https://chain-code.vercel.app](https://chain-code.vercel.app)**
+* **Portfolio Showcase:** **[https://shivammahajan.com/projects/](https://shivammahajan.com/projects/)**
 
 ---
 
